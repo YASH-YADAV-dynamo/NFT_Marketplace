@@ -1,0 +1,18 @@
+[toolchain]
+
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+two_sided_marketplace = "AspnJbrFcTrcZNeUxNoiNTRmBTxRrwLV1aQ8x1iVAbJ7"
+
+[registry]
+url = "https://rpc.devnet.soo.network/rpc"
+
+[provider]
+cluster = "Devnet"
+wallet = "/Users/yash/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
