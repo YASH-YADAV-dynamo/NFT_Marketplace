@@ -1,41 +1,51 @@
 import { UnifiedWalletButton, useWallet } from "@jup-ag/wallet-adapter";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+import { useState } from "react";
 
 export default function ConnectButton() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const formatAddress = (address: string): string => {
     return `${address.slice(0, 4)}…${address.slice(
       address.length - 4,
       address.length
     )}`;
   };
+
   const { connected, disconnect, publicKey } = useWallet();
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   if (connected) {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger className="relative inline-flex items-center justify-center p-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+      <div className="relative">
+        <button
+          onClick={toggleMenu}
+          className="relative inline-flex items-center justify-center p-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
           <span>{formatAddress(publicKey?.toBase58() || "")}</span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white border border-gray-300 rounded-md shadow-lg outline-none">
-          <DropdownMenuLabel className="px-4 py-2 text-gray-700">
-            {formatAddress(publicKey?.toBase58() || "")}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator className="border-t border-gray-300" />
-          <DropdownMenuItem
-            className="cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100"
-            onClick={disconnect}
+        </button>
+        {menuOpen && (
+          <div
+            className="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white border border-gray-300 rounded-md shadow-lg"
+            onMouseLeave={closeMenu}
           >
-            Disconnect
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <div className="px-4 py-2 text-gray-700">
+              {formatAddress(publicKey?.toBase58() || "")}
+            </div>
+            <div className="border-t border-gray-300" />
+            <button
+              onClick={() => {
+                disconnect();
+                closeMenu();
+              }}
+              className="w-full cursor-pointer px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+            >
+              Disconnect
+            </button>
+          </div>
+        )}
+      </div>
     );
   }
 
